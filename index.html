@@ -5,129 +5,36 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>ഉപ്പും മുളകും</title>
     <style>
-        :root {
-            --brand-red: #ff9800;
-            --brand-orange: #ff9800;
-            --amazon-blue: #232f3e;
-            --bg: #f3f3f3;
-        }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: var(--bg); 
-            margin: 0; 
-            padding-bottom: 80px; 
-        }
-
-        /* App Header */
-        header {
-            background: var(--brand-red);
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-        .header-top { display: flex; align-items: center; gap: 15px; }
-        header img { height: 50px; width: auto; border-radius: 8px; border: 2px solid white; }
-        .brand-name { color: white; font-weight: bold; font-size: 1.4rem; }
-        
-        /* Functional Search Bar */
-        .search-container { position: relative; width: 100%; }
-        .search-bar {
-            width: 100%;
-            background: white;
-            border-radius: 25px;
-            padding: 12px 20px;
-            font-size: 1rem;
-            border: none;
-            box-sizing: border-box;
-            outline: none;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        /* Mobile Grid */
+        :root { --brand-red: #d32f2f; --bg: #f3f3f3; }
+        body { font-family: sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; }
+        header { background: var(--brand-red); padding: 15px; color: white; position: sticky; top: 0; z-index: 100; }
+        .search-bar { width: 100%; padding: 10px; border-radius: 20px; border: none; margin-top: 10px; box-sizing: border-box; }
         .container { padding: 10px; }
-        #product-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-        .product-card {
-            background: white;
-            border-radius: 15px;
-            padding: 12px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            display: flex;
-            flex-direction: column;
-            transition: 0.3s;
-        }
-        .product-card img {
-            width: 100%;
-            aspect-ratio: 1/1;
-            object-fit: cover;
-            border-radius: 10px;
-        }
-        .product-card h3 {
-            font-size: 1rem;
-            margin: 10px 0 5px;
-            height: 2.4rem;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            color: #333;
-        }
-        .price { color: var(--brand-red); font-weight: bold; font-size: 1.2rem; }
-        .btn-add {
-            background: var(--brand-orange);
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: bold;
-            margin-top: auto;
-            cursor: pointer;
-        }
-
-        /* Bottom Navigation */
-        .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background: white;
-            display: flex;
-            justify-content: space-around;
-            padding: 12px 0;
-            border-top: 1px solid #ddd;
-            z-index: 1000;
-        }
-        .nav-item { text-align: center; color: var(--amazon-blue); font-size: 0.8rem; border: none; background: none; flex: 1; cursor: pointer; }
-        .nav-item i { font-size: 1.3rem; display: block; margin-bottom: 4px; }
-
-        /* Sections */
-        .view-section { display: none; }
+        #product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .product-card { background: white; border-radius: 12px; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .product-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; }
+        .price { color: var(--brand-red); font-weight: bold; }
+        .out-text { color: #888; font-weight: bold; font-size: 0.8rem; }
+        .btn-add { background: #ff9800; border: none; width: 100%; padding: 8px; border-radius: 20px; font-weight: bold; color: white; margin-top: 5px; cursor: pointer; }
+        .btn-disabled { background: #ccc; cursor: not-allowed; }
+        
+        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #ddd; }
+        .nav-item { border: none; background: none; flex: 1; text-align: center; cursor: pointer; }
+        .view-section { display: none; padding: 15px; }
         .view-active { display: block; }
-
-        .cart-container { background: white; border-radius: 20px; padding: 25px; margin-top: 10px; }
-        .input-field { width: 100%; padding: 14px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; }
-        .place-order-btn { background: var(--brand-red); width: 100%; padding: 16px; border-radius: 10px; border: none; font-weight: bold; font-size: 1.1rem; color: white; }
+        
+        .order-history-card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid var(--brand-red); }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
 
 <header>
-    <div class="header-top">
-        <img src="https://raw.githubusercontent.com/pradyut527/multiplayer/refs/heads/main/Screenshot%202026-04-12%20100935.png" alt="Logo">
-        <span class="brand-name">ഉപ്പും മുളകും</span>
+    <div style="display:flex; align-items:center; gap:10px">
+        <img src="https://raw.githubusercontent.com/pradyut527/multiplayer/refs/heads/main/Screenshot%202026-04-12%20100935.png" height="40" style="border-radius:5px">
+        <span style="font-size:1.4rem; font-weight:bold">ഉപ്പും മുളകും</span>
     </div>
-    <div class="search-container">
-        <input type="text" id="search-input" class="search-bar" placeholder="തിരയുക (Search)..." oninput="filterProducts()">
-    </div>
+    <input type="text" id="search-input" class="search-bar" placeholder="തിരയുക..." oninput="filterProducts()">
 </header>
 
 <div class="container">
@@ -136,23 +43,27 @@
     </div>
 
     <div id="cart-view" class="view-section">
-        <div class="cart-container">
-            <h2 style="color: var(--brand-red);">Your Cart</h2>
+        <div style="background:white; padding:20px; border-radius:15px">
+            <h2>Your Cart</h2>
             <div id="cart-items"></div>
-            <h3 id="cart-total" style="color: var(--brand-red);">Total: ₹0</h3>
-            <hr style="border: 0.5px solid #eee; margin: 20px 0;">
-            <h3>Delivery Details</h3>
-            <input type="text" id="cust-name" class="input-field" placeholder="Full Name">
-            <input type="text" id="cust-address" class="input-field" placeholder="Full Address">
-            <input type="tel" id="cust-phone" class="input-field" placeholder="Phone Number">
-            <button class="place-order-btn" onclick="placeOrder()">Order Now (COD)</button>
+            <h3 id="cart-total">Total: ₹0</h3>
+            <input type="text" id="c-name" placeholder="Full Name" style="width:100%; padding:10px; margin-bottom:10px">
+            <input type="text" id="c-address" placeholder="Address" style="width:100%; padding:10px; margin-bottom:10px">
+            <input type="tel" id="c-phone" placeholder="Phone" style="width:100%; padding:10px; margin-bottom:10px">
+            <button class="btn-add" style="background:var(--brand-red); padding:15px" onclick="placeOrder()">Place Order & Get Bill</button>
         </div>
+    </div>
+
+    <div id="orders-view" class="view-section">
+        <h2>My Orders</h2>
+        <div id="order-history"></div>
     </div>
 </div>
 
 <nav class="bottom-nav">
-    <button class="nav-item" onclick="showView('home')"><i class="fa fa-home"></i>Home</button>
-    <button class="nav-item" onclick="showView('cart')"><i class="fa fa-shopping-cart"></i>Cart (<span id="count">0</span>)</button>
+    <button class="nav-item" onclick="showView('home')"><i class="fa fa-home"></i><br>Home</button>
+    <button class="nav-item" onclick="showView('cart')"><i class="fa fa-shopping-cart"></i><br>Cart (<span id="count">0</span>)</button>
+    <button class="nav-item" onclick="showView('orders')"><i class="fa fa-receipt"></i><br>Orders</button>
 </nav>
 
 <script type="module">
@@ -165,82 +76,95 @@
         databaseURL: "https://chatty-f616e-default-rtdb.firebaseio.com",
         projectId: "chatty-f616e",
     };
-
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    let allProducts = [];
-    let cart = [];
+    let allProducts = [], cart = [], userOrders = JSON.parse(localStorage.getItem('myOrders') || '[]');
 
-    window.showView = (view) => {
-        document.getElementById('home-view').classList.remove('view-active');
-        document.getElementById('cart-view').classList.remove('view-active');
-        document.getElementById(view + '-view').classList.add('view-active');
-        window.scrollTo(0,0);
+    window.showView = (v) => {
+        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('view-active'));
+        document.getElementById(v + '-view').classList.add('view-active');
+        if(v === 'orders') renderHistory();
     };
 
-    onValue(ref(db, 'products'), (snapshot) => {
-        const data = snapshot.val();
-        allProducts = data ? Object.keys(data).map(id => ({ id, ...data[id] })) : [];
+    onValue(ref(db, 'products'), (snap) => {
+        allProducts = snap.val() ? Object.keys(snap.val()).map(id => ({id, ...snap.val()[id]})) : [];
         renderProducts(allProducts);
     });
 
-    function renderProducts(products) {
+    function renderProducts(list) {
         const grid = document.getElementById('product-grid');
-        grid.innerHTML = '';
-        if(products.length === 0) {
-            grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:50px;">No items found.</div>';
-            return;
-        }
-        products.forEach(p => {
-            grid.innerHTML += `
-                <div class="product-card">
-                    <img src="${p.image}">
-                    <h3>${p.name}</h3>
-                    <div class="price">₹${p.price}</div>
-                    <button class="btn-add" onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>
-                </div>`;
-        });
+        grid.innerHTML = list.map(p => `
+            <div class="product-card">
+                <img src="${p.image}">
+                <h3 style="font-size:0.9rem">${p.name}</h3>
+                <div class="price">₹${p.price}</div>
+                ${p.inStock ? 
+                    `<button class="btn-add" onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>` : 
+                    `<button class="btn-add btn-disabled" disabled>Out of Stock</button>`}
+            </div>`).join('');
     }
-
-    window.filterProducts = () => {
-        const term = document.getElementById('search-input').value.toLowerCase();
-        const filtered = allProducts.filter(p => p.name.toLowerCase().includes(term));
-        renderProducts(filtered);
-    };
 
     window.addToCart = (name, price) => {
         cart.push({name, price});
         document.getElementById('count').innerText = cart.length;
         updateCartUI();
-        alert('Added to cart!');
     };
 
     function updateCartUI() {
-        const div = document.getElementById('cart-items');
         let total = 0;
-        div.innerHTML = cart.length ? cart.map((item) => {
-            total += parseFloat(item.price);
-            return `<div style="display:flex; justify-content:space-between; margin-bottom:10px; font-size: 0.95rem;">
-                <span>${item.name}</span><strong>₹${item.price}</strong>
-            </div>`;
-        }).join('') : '<p>Your cart is empty.</p>';
+        document.getElementById('cart-items').innerHTML = cart.map(i => {
+            total += i.price;
+            return `<div style="display:flex; justify-content:space-between"><span>${i.name}</span><span>₹${i.price}</span></div>`;
+        }).join('');
         document.getElementById('cart-total').innerText = `Total: ₹${total}`;
     }
 
     window.placeOrder = async () => {
-        const name = document.getElementById('cust-name').value;
-        const address = document.getElementById('cust-address').value;
-        const phone = document.getElementById('cust-phone').value;
-        if(!name || !address || !phone || cart.length === 0) return alert("ദയവായി എല്ലാ വിവരങ്ങളും പൂരിപ്പിക്കുക.");
+        const name = document.getElementById('c-name').value;
+        const address = document.getElementById('c-address').value;
+        const phone = document.getElementById('c-phone').value;
+        if(!name || cart.length === 0) return alert("Details missing!");
 
-        await push(ref(db, 'orders'), {
-            customer: name, address, phone, items: cart, status: "Pending", timestamp: Date.now()
-        });
-        alert("ഓർഡർ സ്വീകരിച്ചു!");
-        cart = [];
-        document.getElementById('count').innerText = '0';
-        updateCartUI();
-        showView('home');
+        // 1. Logic for Delivery Time
+        const hr = new Date().getHours();
+        const estimate = (hr >= 21 || hr <= 5) ? "Will be delivered by morning (8 AM - 10 AM)" : "Estimated Delivery: 30-45 Minutes";
+
+        const orderData = { customer: name, address, phone, items: cart, status: "Pending", time: new Date().toLocaleString(), estimate };
+        const newRef = await push(ref(db, 'orders'), orderData);
+        
+        // Save locally so they see it in "Orders" tab
+        userOrders.push({...orderData, id: newRef.key});
+        localStorage.setItem('myOrders', JSON.stringify(userOrders));
+
+        // 2. Generate Bill (Auto-Download)
+        const billText = `--- BILL: ഉപ്പും മുളകും ---\nCustomer: ${name}\nTime: ${orderData.time}\n\n` + 
+                         cart.map(i => `${i.name}: ₹${i.price}`).join('\n') + 
+                         `\n\nTotal: ${document.getElementById('cart-total').innerText}\n\nThank you!`;
+        const blob = new Blob([billText], {type: 'text/plain'});
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `Bill_${Date.now()}.txt`;
+        link.click();
+
+        alert(`Order Placed!\n\n${estimate}`);
+        cart = []; document.getElementById('count').innerText = '0';
+        showView('orders');
+    };
+
+    function renderHistory() {
+        const historyDiv = document.getElementById('order-history');
+        historyDiv.innerHTML = userOrders.reverse().map(o => `
+            <div class="order-history-card">
+                <strong>Order #${o.id.slice(-5)}</strong> <br>
+                <small>${o.time}</small><br>
+                <div style="color:var(--brand-red); font-weight:bold; margin:5px 0">${o.estimate}</div>
+                <div style="font-size:0.8rem">${o.items.map(i => i.name).join(', ')}</div>
+            </div>`).join('');
+    }
+
+    window.filterProducts = () => {
+        const term = document.getElementById('search-input').value.toLowerCase();
+        renderProducts(allProducts.filter(p => p.name.toLowerCase().includes(term)));
     };
 </script>
 </body>
