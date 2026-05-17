@@ -1,171 +1,544 @@
 <!DOCTYPE html>
-<html lang="ml">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ഉപ്പും മുളകും</title>
-    <style>
-        :root { --brand-red: #d32f2f; --bg: #f3f3f3; }
-        body { font-family: sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; }
-        header { background: var(--brand-red); padding: 15px; color: white; position: sticky; top: 0; z-index: 100; }
-        .search-bar { width: 100%; padding: 10px; border-radius: 20px; border: none; margin-top: 10px; box-sizing: border-box; }
-        .container { padding: 10px; }
-        #product-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .product-card { background: white; border-radius: 12px; padding: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .product-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border-radius: 8px; }
-        .price { color: var(--brand-red); font-weight: bold; }
-        .out-text { color: #888; font-weight: bold; font-size: 0.8rem; }
-        .btn-add { background: #ff9800; border: none; width: 100%; padding: 8px; border-radius: 20px; font-weight: bold; color: white; margin-top: 5px; cursor: pointer; }
-        .btn-disabled { background: #ccc; cursor: not-allowed; }
-        
-        .bottom-nav { position: fixed; bottom: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 12px 0; border-top: 1px solid #ddd; }
-        .nav-item { border: none; background: none; flex: 1; text-align: center; cursor: pointer; }
-        .view-section { display: none; padding: 15px; }
-        .view-active { display: block; }
-        
-        .order-history-card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 10px; border-left: 4px solid var(--brand-red); }
-    </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRAD CONSOLE</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    overflow:hidden;
+    font-family:'Press Start 2P',cursive;
+    background:#02040a;
+    color:white;
+}
+
+#loadingScreen{
+    position:fixed;
+    inset:0;
+    background:radial-gradient(circle at center,#0b1d30,#02040a 70%);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:9999;
+}
+
+.loadingLogo{
+    font-size:70px;
+    color:#00e5ff;
+    text-shadow:0 0 20px #00e5ff;
+    animation:pulse 1s infinite alternate;
+}
+
+.loadingText{
+    margin-top:40px;
+    color:#ff00d4;
+    font-size:20px;
+}
+
+.loadingBar{
+    width:500px;
+    height:25px;
+    border:3px solid #00e5ff;
+    margin-top:30px;
+    overflow:hidden;
+    border-radius:20px;
+}
+
+.loadingFill{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#00e5ff,#ff00d4);
+    animation:load 4s forwards;
+}
+
+@keyframes load{
+    from{width:0%;}
+    to{width:100%;}
+}
+
+@keyframes pulse{
+    from{transform:scale(1);}
+    to{transform:scale(1.05);}
+}
+
+#mainUI{
+    display:none;
+    width:100vw;
+    height:100vh;
+    background:
+    linear-gradient(rgba(0,255,255,0.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,255,0.06) 1px,transparent 1px),
+    radial-gradient(circle at center,#0d1b2a,#02040a 75%);
+    background-size:40px 40px,40px 40px,cover;
+    padding:40px;
+}
+
+.topBar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:35px;
+}
+
+.logo{
+    font-size:42px;
+    color:#00e5ff;
+    text-shadow:0 0 20px #00e5ff;
+}
+
+.status{
+    color:#ff00d4;
+    font-size:14px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:28px;
+}
+
+.card{
+    height:220px;
+    border:3px solid rgba(0,229,255,0.4);
+    border-radius:25px;
+    background:rgba(0,0,0,0.45);
+    backdrop-filter:blur(5px);
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    transition:0.2s;
+    box-shadow:0 0 25px rgba(0,229,255,0.2);
+}
+
+.card i{
+    font-size:70px;
+    margin-bottom:25px;
+    color:#00e5ff;
+}
+
+.card h2{
+    font-size:18px;
+}
+
+.selected{
+    transform:scale(1.08);
+    border-color:#ff00d4;
+    box-shadow:0 0 35px #ff00d4;
+}
+
+#gameArea{
+    position:fixed;
+    inset:0;
+    background:black;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:999;
+}
+
+canvas{
+    border:4px solid #00e5ff;
+    background:black;
+    box-shadow:0 0 30px #00e5ff;
+}
+
+.gameTitle{
+    color:#00e5ff;
+    margin-bottom:20px;
+    font-size:22px;
+}
+
+.backText{
+    position:absolute;
+    top:20px;
+    left:20px;
+    color:#ff00d4;
+    font-size:12px;
+}
+
+.infoPanel{
+    position:absolute;
+    bottom:20px;
+    right:20px;
+    border:2px solid #00e5ff;
+    padding:15px;
+    border-radius:15px;
+    color:#00e5ff;
+    font-size:12px;
+    background:rgba(0,0,0,0.4);
+}
+
+</style>
 </head>
 <body>
 
-<header>
-    <div style="display:flex; align-items:center; gap:10px">
-        <img src="https://raw.githubusercontent.com/pradyut527/multiplayer/refs/heads/main/Screenshot%202026-04-12%20100935.png" height="40" style="border-radius:5px">
-        <span style="font-size:1.4rem; font-weight:bold">ഉപ്പും മുളകും</span>
-    </div>
-    <input type="text" id="search-input" class="search-bar" placeholder="തിരയുക..." oninput="filterProducts()">
-</header>
-
-<div class="container">
-    <div id="home-view" class="view-section view-active">
-        <div id="product-grid"></div>
-    </div>
-
-    <div id="cart-view" class="view-section">
-        <div style="background:white; padding:20px; border-radius:15px">
-            <h2>Your Cart</h2>
-            <div id="cart-items"></div>
-            <h3 id="cart-total">Total: ₹0</h3>
-            <input type="text" id="c-name" placeholder="Full Name" style="width:100%; padding:10px; margin-bottom:10px">
-            <input type="text" id="c-address" placeholder="Address" style="width:100%; padding:10px; margin-bottom:10px">
-            <input type="tel" id="c-phone" placeholder="Phone" style="width:100%; padding:10px; margin-bottom:10px">
-            <button class="btn-add" style="background:var(--brand-red); padding:15px" onclick="placeOrder()">Place Order & Get Bill</button>
-        </div>
-    </div>
-
-    <div id="orders-view" class="view-section">
-        <h2>My Orders</h2>
-        <div id="order-history"></div>
+<div id="loadingScreen">
+    <div class="loadingLogo">PRAD CONSOLE</div>
+    <div class="loadingText">INITIALIZING RETRO SYSTEM...</div>
+    <div class="loadingBar">
+        <div class="loadingFill"></div>
     </div>
 </div>
 
-<nav class="bottom-nav">
-    <button class="nav-item" onclick="showView('home')"><i class="fa fa-home"></i><br>Home</button>
-    <button class="nav-item" onclick="showView('cart')"><i class="fa fa-shopping-cart"></i><br>Cart (<span id="count">0</span>)</button>
-    <button class="nav-item" onclick="showView('orders')"><i class="fa fa-receipt"></i><br>Orders</button>
-</nav>
+<div id="mainUI">
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    <div class="topBar">
+        <div class="logo">PRAD CONSOLE</div>
+        <div class="status">REMOTE READY • 60 FPS • RETRO MODE</div>
+    </div>
 
-    const firebaseConfig = {
-        apiKey: "dTAyABcIvedlAOmGxTqfIwltrQ8qHJZyMaA9MXiU",
-        authDomain: "chatty-f616e.firebaseapp.com",
-        databaseURL: "https://chatty-f616e-default-rtdb.firebaseio.com",
-        projectId: "chatty-f616e",
-    };
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    let allProducts = [], cart = [], userOrders = JSON.parse(localStorage.getItem('myOrders') || '[]');
+    <div class="grid">
 
-    window.showView = (v) => {
-        document.querySelectorAll('.view-section').forEach(s => s.classList.remove('view-active'));
-        document.getElementById(v + '-view').classList.add('view-active');
-        if(v === 'orders') renderHistory();
-    };
+        <div class="card selected" data-game="snake">
+            <i class="fa-solid fa-worm"></i>
+            <h2>SNAKE</h2>
+        </div>
 
-    onValue(ref(db, 'products'), (snap) => {
-        allProducts = snap.val() ? Object.keys(snap.val()).map(id => ({id, ...snap.val()[id]})) : [];
-        renderProducts(allProducts);
-    });
+        <div class="card" data-game="pong">
+            <i class="fa-solid fa-table-tennis-paddle-ball"></i>
+            <h2>PONG</h2>
+        </div>
 
-    function renderProducts(list) {
-        const grid = document.getElementById('product-grid');
-        grid.innerHTML = list.map(p => `
-            <div class="product-card">
-                <img src="${p.image}">
-                <h3 style="font-size:0.9rem">${p.name}</h3>
-                <div class="price">₹${p.price}</div>
-                ${p.inStock ? 
-                    `<button class="btn-add" onclick="addToCart('${p.name}', ${p.price})">Add to Cart</button>` : 
-                    `<button class="btn-add btn-disabled" disabled>Out of Stock</button>`}
-            </div>`).join('');
+        <div class="card" data-game="tetris">
+            <i class="fa-solid fa-cubes"></i>
+            <h2>TETRIS</h2>
+        </div>
+
+        <div class="card" data-game="shooter">
+            <i class="fa-solid fa-crosshairs"></i>
+            <h2>SHOOTER</h2>
+        </div>
+
+        <div class="card" data-game="pacman">
+            <i class="fa-solid fa-ghost"></i>
+            <h2>PAC MAN</h2>
+        </div>
+
+        <div class="card" data-game="racing">
+            <i class="fa-solid fa-car-side"></i>
+            <h2>RACING</h2>
+        </div>
+
+    </div>
+
+    <div class="infoPanel">
+        CPU: 98%<br><br>
+        FRAME RATE: 60FPS<br><br>
+        ROM LOADED: RETRO PACK<br><br>
+        USE TV REMOTE ARROWS
+    </div>
+
+</div>
+
+<div id="gameArea">
+    <div class="backText">PRESS BACKSPACE TO RETURN</div>
+    <div class="gameTitle" id="gameTitle">GAME</div>
+    <canvas id="gameCanvas" width="900" height="550"></canvas>
+</div>
+
+<script>
+
+setTimeout(()=>{
+    document.getElementById('loadingScreen').style.display='none';
+    document.getElementById('mainUI').style.display='block';
+},4200);
+
+const cards=[...document.querySelectorAll('.card')];
+let selected=0;
+
+function updateSelection(){
+    cards.forEach(c=>c.classList.remove('selected'));
+    cards[selected].classList.add('selected');
+}
+
+function moveSelection(direction){
+    if(direction==='right'){
+        selected=(selected+1)%cards.length;
+    }
+    if(direction==='left'){
+        selected=(selected-1+cards.length)%cards.length;
+    }
+    if(direction==='down'){
+        selected=(selected+3)%cards.length;
+    }
+    if(direction==='up'){
+        selected=(selected-3+cards.length)%cards.length;
+    }
+    updateSelection();
+}
+
+let gameRunning=false;
+const canvas=document.getElementById('gameCanvas');
+const ctx=canvas.getContext('2d');
+
+function openGame(name){
+    gameRunning=true;
+    document.getElementById('mainUI').style.display='none';
+    document.getElementById('gameArea').style.display='flex';
+    document.getElementById('gameTitle').innerText=name.toUpperCase();
+
+    if(name==='snake')snakeGame();
+    if(name==='pong')pongGame();
+    if(name==='tetris')tetrisScreen();
+    if(name==='shooter')shooterGame();
+    if(name==='pacman')pacmanScreen();
+    if(name==='racing')racingScreen();
+}
+
+function exitGame(){
+    gameRunning=false;
+    document.getElementById('mainUI').style.display='block';
+    document.getElementById('gameArea').style.display='none';
+}
+
+// REMOTE / KEYBOARD CONTROLS
+
+document.addEventListener('keydown',e=>{
+
+    if(!gameRunning){
+
+        if(e.key==='ArrowRight')moveSelection('right');
+        if(e.key==='ArrowLeft')moveSelection('left');
+        if(e.key==='ArrowDown')moveSelection('down');
+        if(e.key==='ArrowUp')moveSelection('up');
+
+        if(e.key==='Enter'){
+            openGame(cards[selected].dataset.game);
+        }
     }
 
-    window.addToCart = (name, price) => {
-        cart.push({name, price});
-        document.getElementById('count').innerText = cart.length;
-        updateCartUI();
-    };
-
-    function updateCartUI() {
-        let total = 0;
-        document.getElementById('cart-items').innerHTML = cart.map(i => {
-            total += i.price;
-            return `<div style="display:flex; justify-content:space-between"><span>${i.name}</span><span>₹${i.price}</span></div>`;
-        }).join('');
-        document.getElementById('cart-total').innerText = `Total: ₹${total}`;
+    if(e.key==='Backspace'){
+        exitGame();
     }
 
-    window.placeOrder = async () => {
-        const name = document.getElementById('c-name').value;
-        const address = document.getElementById('c-address').value;
-        const phone = document.getElementById('c-phone').value;
-        if(!name || cart.length === 0) return alert("Details missing!");
+});
 
-        // 1. Logic for Delivery Time
-        const hr = new Date().getHours();
-        const estimate = (hr >= 21 || hr <= 5) ? "Will be delivered by morning (8 AM - 10 AM)" : "Estimated Delivery: 30-45 Minutes";
+// SNAKE GAME
 
-        const orderData = { customer: name, address, phone, items: cart, status: "Pending", time: new Date().toLocaleString(), estimate };
-        const newRef = await push(ref(db, 'orders'), orderData);
-        
-        // Save locally so they see it in "Orders" tab
-        userOrders.push({...orderData, id: newRef.key});
-        localStorage.setItem('myOrders', JSON.stringify(userOrders));
+function snakeGame(){
 
-        // 2. Generate Bill (Auto-Download)
-        const billText = `--- BILL: ഉപ്പും മുളകും ---\nCustomer: ${name}\nTime: ${orderData.time}\n\n` + 
-                         cart.map(i => `${i.name}: ₹${i.price}`).join('\n') + 
-                         `\n\nTotal: ${document.getElementById('cart-total').innerText}\n\nThank you!`;
-        const blob = new Blob([billText], {type: 'text/plain'});
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `Bill_${Date.now()}.txt`;
-        link.click();
+let snake=[{x:10,y:10}];
+let food={x:15,y:15};
+let dx=1;
+let dy=0;
+let size=25;
 
-        alert(`Order Placed!\n\n${estimate}`);
-        cart = []; document.getElementById('count').innerText = '0';
-        showView('orders');
+function draw(){
+
+if(!gameRunning)return;
+
+ctx.fillStyle='black';
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle='#00ff88';
+snake.forEach(part=>{
+    ctx.fillRect(part.x*size,part.y*size,size-2,size-2);
+});
+
+ctx.fillStyle='#ff0055';
+ctx.fillRect(food.x*size,food.y*size,size,size);
+
+let head={x:snake[0].x+dx,y:snake[0].y+dy};
+
+snake.unshift(head);
+
+if(head.x===food.x && head.y===food.y){
+    food={
+        x:Math.floor(Math.random()*30),
+        y:Math.floor(Math.random()*20)
     };
+}else{
+    snake.pop();
+}
 
-    function renderHistory() {
-        const historyDiv = document.getElementById('order-history');
-        historyDiv.innerHTML = userOrders.reverse().map(o => `
-            <div class="order-history-card">
-                <strong>Order #${o.id.slice(-5)}</strong> <br>
-                <small>${o.time}</small><br>
-                <div style="color:var(--brand-red); font-weight:bold; margin:5px 0">${o.estimate}</div>
-                <div style="font-size:0.8rem">${o.items.map(i => i.name).join(', ')}</div>
-            </div>`).join('');
+if(head.x<0||head.y<0||head.x>35||head.y>21){
+    snake=[{x:10,y:10}];
+}
+
+setTimeout(draw,100);
+}
+
+function control(e){
+    if(e.key==='ArrowUp'){dx=0;dy=-1;}
+    if(e.key==='ArrowDown'){dx=0;dy=1;}
+    if(e.key==='ArrowLeft'){dx=-1;dy=0;}
+    if(e.key==='ArrowRight'){dx=1;dy=0;}
+}
+
+document.onkeydown=control;
+draw();
+}
+
+// PONG
+
+function pongGame(){
+
+let paddleY=200;
+let ballX=400;
+let ballY=250;
+let vx=5;
+let vy=5;
+
+function loop(){
+
+if(!gameRunning)return;
+
+ctx.fillStyle='black';
+ctx.fillRect(0,0,canvas.width,canvas.height);
+
+ctx.fillStyle='#00e5ff';
+ctx.fillRect(20,paddleY,20,120);
+
+ctx.beginPath();
+ctx.arc(ballX,ballY,15,0,Math.PI*2);
+ctx.fill();
+
+ballX+=vx;
+ballY+=vy;
+
+if(ballY<0||ballY>550)vy*=-1;
+if(ballX<40&&ballY>paddleY&&ballY<paddleY+120)vx*=-1;
+if(ballX>900||ballX<0){
+    ballX=450;
+    ballY=250;
+}
+
+requestAnimationFrame(loop);
+}
+
+function control(e){
+    if(e.key==='ArrowUp')paddleY-=30;
+    if(e.key==='ArrowDown')paddleY+=30;
+}
+
+document.onkeydown=control;
+loop();
+}
+
+// TETRIS SCREEN
+
+function tetrisScreen(){
+ctx.fillStyle='black';
+ctx.fillRect(0,0,900,550);
+
+for(let y=0;y<12;y++){
+    for(let x=0;x<8;x++){
+        ctx.fillStyle=`hsl(${Math.random()*360},100%,50%)`;
+        ctx.fillRect(x*60+200,y*40+20,55,35);
     }
+}
+}
 
-    window.filterProducts = () => {
-        const term = document.getElementById('search-input').value.toLowerCase();
-        renderProducts(allProducts.filter(p => p.name.toLowerCase().includes(term)));
-    };
+// PACMAN SCREEN
+
+function pacmanScreen(){
+let angle=0.2;
+
+function loop(){
+
+if(!gameRunning)return;
+
+ctx.fillStyle='black';
+ctx.fillRect(0,0,900,550);
+
+ctx.fillStyle='yellow';
+ctx.beginPath();
+ctx.moveTo(300,250);
+ctx.arc(300,250,80,angle,Math.PI*2-angle);
+ctx.fill();
+
+ctx.fillStyle='cyan';
+ctx.beginPath();
+ctx.arc(600,250,50,0,Math.PI*2);
+ctx.fill();
+
+angle=angle===0.2?0.6:0.2;
+
+setTimeout(loop,200);
+}
+
+loop();
+}
+
+// SHOOTER GAME
+
+function shooterGame(){
+
+let playerX=400;
+let bullets=[];
+
+function loop(){
+
+if(!gameRunning)return;
+
+ctx.fillStyle='black';
+ctx.fillRect(0,0,900,550);
+
+ctx.fillStyle='#00e5ff';
+ctx.fillRect(playerX,500,60,20);
+
+ctx.fillStyle='#ff0055';
+
+bullets.forEach(b=>{
+    b.y-=8;
+    ctx.fillRect(b.x,b.y,6,20);
+});
+
+requestAnimationFrame(loop);
+}
+
+function control(e){
+    if(e.key==='ArrowLeft')playerX-=25;
+    if(e.key==='ArrowRight')playerX+=25;
+    if(e.key==='Enter'){
+        bullets.push({x:playerX+25,y:500});
+    }
+}
+
+document.onkeydown=control;
+loop();
+}
+
+// RACING SCREEN
+
+function racingScreen(){
+let road=0;
+
+function loop(){
+
+if(!gameRunning)return;
+
+ctx.fillStyle='#222';
+ctx.fillRect(0,0,900,550);
+
+ctx.fillStyle='white';
+
+for(let i=0;i<20;i++){
+    ctx.fillRect(430,((i*40)+road)%600,20,30);
+}
+
+ctx.fillStyle='#00e5ff';
+ctx.fillRect(390,430,120,80);
+
+road+=10;
+
+requestAnimationFrame(loop);
+}
+
+loop();
+}
+
 </script>
 </body>
 </html>
